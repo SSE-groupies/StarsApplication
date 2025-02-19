@@ -7,7 +7,7 @@ import uvicorn
 
 app = FastAPI()
 
-# Adjust these if your frontend is served from somewhere else
+# Adjust these if frontend is served from somewhere else
 origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 app.add_middleware(
     CORSMiddleware,
