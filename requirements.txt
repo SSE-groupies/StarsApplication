@@ -1,3 +1,5 @@
 fastapi==0.115.8
 httpx
-sqlalchemy
+Flask==3.0.2
+Flask-SQLAlchemy==3.1.1
+redis==5.0.1
