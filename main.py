@@ -27,6 +27,32 @@ async def get_stars():
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
     return resp.json()
 
+@app.get("/stars/stream")
+async def stream_stars(request: Request):
+    """
+    Pass-through SSE from the DB service so the frontend
+    can connect to us instead of calling the DB directly.
+    """
+    async def event_generator():
+        # No read timeout => None, because SSE can remain open for a while
+        async with httpx.AsyncClient(timeout=None) as client:
+            async with client.stream("GET", f"{DATABASE_SERVICE_URL}/stars/stream") as r:
+                async for line in r.aiter_lines():
+                    if await request.is_disconnected():
+                        break
+                    yield f"{line}\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+@app.get("/stars/{star_id}")
+async def get_star(star_id: int):
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(f"{DATABASE_SERVICE_URL}/stars/{star_id}")
+    if resp.status_code != 200:
+        raise HTTPException(status_code=resp.status_code, detail=resp.text)
+    return resp.json()
+
+
 @app.post("/stars")
 async def create_star(star_data: dict):
     async with httpx.AsyncClient() as client:
@@ -52,22 +78,6 @@ async def delete_all_stars():
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
     return resp.json()
 
-@app.get("/stars/stream")
-async def stream_stars(request: Request):
-    """
-    Pass-through SSE from the DB service so the frontend
-    can connect to us instead of calling the DB directly.
-    """
-    async def event_generator():
-        # No read timeout => None, because SSE can remain open for a while
-        async with httpx.AsyncClient(timeout=None) as client:
-            async with client.stream("GET", f"{DATABASE_SERVICE_URL}/stars/stream") as r:
-                async for line in r.aiter_lines():
-                    if await request.is_disconnected():
-                        break
-                    yield f"{line}\n"
-
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
 if __name__ == "__main__":
