@@ -18,6 +18,7 @@ app.add_middleware(
 )
 
 DATABASE_SERVICE_URL = "http://127.0.0.1:5000"
+FILTER_SERVICE_URL = "http://127.0.0.1:7000"
 
 @app.get("/stars")
 async def get_stars():
@@ -55,10 +56,21 @@ async def get_star(star_id: int):
 
 @app.post("/stars")
 async def create_star(star_data: dict):
+    # Log the incoming star data for debugging
+    print("Incoming star data:", star_data)
+
+    # Send the full star data to the filter service
     async with httpx.AsyncClient() as client:
-        resp = await client.post(f"{DATABASE_SERVICE_URL}/stars", json=star_data)
+        # Forward the entire star_data to the filter service
+        resp = await client.post(f"{FILTER_SERVICE_URL}/filter", json=star_data)
+    
+    # Log the response from the filter service for debugging
+    print("Response from filter service:", resp.status_code, resp.text)
+
     if resp.status_code != 200:
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
+    
+    # Return the response from the filter service to the frontend
     return resp.json()
 
 @app.delete("/stars/{star_id}")
