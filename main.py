@@ -23,6 +23,7 @@ app.add_middleware(
 
 # Database service URL
 DATABASE_SERVICE_URL = "http://127.0.0.1:5000"
+FILTER_SERVICE_URL = "http://127.0.0.1:7000"
 
 # JWT Authentication Configuration
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
@@ -95,11 +96,42 @@ async def create_star(
     """
     Protected: Only authenticated users can create stars.
     """
+    # Log the incoming star data for debugging
+    print("Incoming star data:", star_data)
+
+    # Send the full star data to the filter service
     async with httpx.AsyncClient() as client:
-        resp = await client.post(f"{DATABASE_SERVICE_URL}/stars", json=star_data)
-    if resp.status_code != 200:
-        raise HTTPException(status_code=resp.status_code, detail=resp.text)
-    return resp.json()
+        # Forward the entire star_data to the filter service
+        resp = await client.post(f"{FILTER_SERVICE_URL}/filter", json=star_data)
+
+        # Log the response from the filter service for debugging
+        print("Response from filter service:", resp.json())
+
+        # Check if the response status code is 200 (OK)
+        if resp.status_code == 200:
+            # Parse the JSON response to get the status and message
+            filter_response = resp.json()
+            is_acceptable = filter_response.get("status")
+
+            # If message is acceptable
+            if is_acceptable:
+                # Forward to database
+                async with httpx.AsyncClient() as client:
+                    db_resp = await client.post(
+                        f"{DATABASE_SERVICE_URL}/stars", json=star_data
+                    )
+                if db_resp.status_code != 200:
+                    raise HTTPException(
+                        status_code=db_resp.status_code, detail=db_resp.text
+                    )
+                return db_resp.json()
+            else:
+                # Return the filter service's response message if message
+                # is inappropriate
+                return filter_response
+        else:
+            # Raise an exception if the filter service returns an error
+            raise HTTPException(status_code=resp.status_code, detail=resp.text)
 
 @app.delete("/stars/{star_id}")
 async def delete_star(
