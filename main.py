@@ -88,7 +88,7 @@ async def create_star(star_data: dict):
             else:
                 # Return the filter service's response message if message
                 # is inappropriate
-                return filter_response.get("message")
+                return filter_response
         else:
             # Raise an exception if the filter service returns an error
             raise HTTPException(status_code=resp.status_code, detail=resp.text)
