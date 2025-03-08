@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 # Database service URL
-DATABASE_SERVICE_URL = "http://127.0.0.1:5000"
+DATABASE_SERVICE_URL = "http://127.0.0.1:8080"
 FILTER_SERVICE_URL = "http://127.0.0.1:7000"
 
 # JWT Authentication Configuration
@@ -55,7 +55,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 @app.get("/stars")
 async def get_stars():
     async with httpx.AsyncClient() as client:
-        resp = await client.get(f"{DATABASE_SERVICE_URL}/stars")
+        resp = await client.get(f"{DATABASE_SERVICE_URL}/stars/")
     if resp.status_code != 200:
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
     return resp.json()
@@ -68,7 +68,7 @@ async def stream_stars(request: Request):
     """
     async def event_generator():
         async with httpx.AsyncClient(timeout=None) as client:
-            async with client.stream("GET", f"{DATABASE_SERVICE_URL}/stars/stream") as r:
+            async with client.stream("GET", f"{DATABASE_SERVICE_URL}/events/stars/stream") as r:
                 async for line in r.aiter_lines():
                     if await request.is_disconnected():
                         break
@@ -77,7 +77,7 @@ async def stream_stars(request: Request):
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @app.get("/stars/{star_id}")
-async def get_star(star_id: int):
+async def get_star(star_id):
     async with httpx.AsyncClient() as client:
         resp = await client.get(f"{DATABASE_SERVICE_URL}/stars/{star_id}")
     if resp.status_code != 200:
