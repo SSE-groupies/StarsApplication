@@ -118,7 +118,7 @@ async def create_star(
                 # Forward to database
                 async with httpx.AsyncClient() as client:
                     db_resp = await client.post(
-                        f"{DATABASE_SERVICE_URL}/stars", json=star_data
+                        f"{DATABASE_SERVICE_URL}/stars/", json=star_data
                     )
                 if db_resp.status_code != 200:
                     raise HTTPException(
