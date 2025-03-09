@@ -12,7 +12,8 @@ from typing import Optional
 app = FastAPI()
 
 # Adjust these if frontend is served from somewhere else
-origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+# origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+origins = ["https://frontend.delightfulwater-b24a63e0.uksouth.azurecontainerapps.io"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
