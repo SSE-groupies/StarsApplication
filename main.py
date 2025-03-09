@@ -22,11 +22,13 @@ app.add_middleware(
 )
 
 # Database service URL
-DATABASE_SERVICE_URL = "http://127.0.0.1:8080"
-FILTER_SERVICE_URL = "http://127.0.0.1:7000"
+# DATABASE_SERVICE_URL = "http://127.0.0.1:8080"
+DATABASE_SERVICE_URL = "https://starmap-service.delightfulwater-b24a63e0.uksouth.azurecontainerapps.io"
+# FILTER_SERVICE_URL = "http://127.0.0.1:7000"
+FILTER_SERVICE_URL = "https://comment-filter.delightfulwater-b24a63e0.uksouth.azurecontainerapps.io"
 
 # JWT Authentication Configuration
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
+SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key") # TODO configure to real secret key
 ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
