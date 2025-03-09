@@ -24,7 +24,7 @@ app.add_middleware(
 )
 
 # DATABASE_SERVICE_URL = "http://127.0.0.1:8080"
-DATABASE_SERVICE_URL = "https://database-backend.delightfulwater-b24a63e0.uksouth.azurecontainerapps.io"
+DATABASE_SERVICE_URL = "https://starmap-service.delightfulwater-b24a63e0.uksouth.azurecontainerapps.io"
 # FILTER_SERVICE_URL = "http://127.0.0.1:7000"
 FILTER_SERVICE_URL = "https://comment-filter.delightfulwater-b24a63e0.uksouth.azurecontainerapps.io"
 
