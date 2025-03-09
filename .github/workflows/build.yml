@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write  # ✅ Required for Azure OIDC authentication
+  contents: read   # (Optional) Needed for repo checkout
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -44,7 +48,6 @@ jobs:
           LOCATION="${{ secrets.AZURE_LOCATION }}"
           IMAGE_NAME="ghcr.io/${{ secrets.GHCR_USERNAME }}/python-interface:latest"
 
-          # Create Azure Container App if it doesn't exist
           az containerapp create \
             --name $APP_NAME \
             --resource-group $RG \
