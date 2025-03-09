@@ -160,6 +160,35 @@ async def delete_all_stars(
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
     return resp.json()
 
+@app.post("/stars/{star_id}/like")
+async def like_star(
+    star_id: str,
+    current_user: str = Depends(get_current_user)
+):
+    """
+    Protected: Only authenticated users can like stars.
+    """
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(f"{DATABASE_SERVICE_URL}/stars/{star_id}/like")
+    if resp.status_code != 200:
+        raise HTTPException(status_code=resp.status_code, detail=resp.text)
+    return resp.json()
+
+@app.post("/stars/{star_id}/dislike")
+async def dislike_star(
+    star_id: str,
+    current_user: str = Depends(get_current_user)
+):
+    """
+    Protected: Only authenticated users can like stars.
+    """
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(f"{DATABASE_SERVICE_URL}/stars/{star_id}/dislike")
+    if resp.status_code != 200:
+        raise HTTPException(status_code=resp.status_code, detail=resp.text)
+    return resp.json()
+
+
 # -------------------------
 # Run Server
 # -------------------------
