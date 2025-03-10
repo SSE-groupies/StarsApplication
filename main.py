@@ -102,7 +102,7 @@ async def create_star(
     # Log the incoming star data for debugging
     print("Incoming star data:", star_data)
 
-    star_data["Username"] = current_user
+    # star_data["Username"] = current_user # TODO Arnie ????
 
     # Send the full star data to the filter service
     async with httpx.AsyncClient() as client:
