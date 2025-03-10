@@ -138,32 +138,32 @@ async def create_star(
             # Raise an exception if the filter service returns an error
             raise HTTPException(status_code=resp.status_code, detail=resp.text)
 
-@app.delete("/stars/{star_id}")
-async def delete_star(
-    star_id: int,
-    current_user: str = Depends(get_current_user)
-):
-    """
-    Protected: Only authenticated users can delete stars.
-    """
-    async with httpx.AsyncClient() as client:
-        resp = await client.delete(f"{DATABASE_SERVICE_URL}/stars/{star_id}")
-    if resp.status_code != 200:
-        raise HTTPException(status_code=resp.status_code, detail=resp.text)
-    return resp.json()
+# @app.delete("/stars/{star_id}")
+# async def delete_star(
+#     star_id: int,
+#     current_user: str = Depends(get_current_user)
+# ):
+#     """
+#     Protected: Only authenticated users can delete stars.
+#     """
+#     async with httpx.AsyncClient() as client:
+#         resp = await client.delete(f"{DATABASE_SERVICE_URL}/stars/{star_id}")
+#     if resp.status_code != 200:
+#         raise HTTPException(status_code=resp.status_code, detail=resp.text)
+#     return resp.json()
 
-@app.delete("/stars")
-async def delete_all_stars(
-    current_user: str = Depends(get_current_user)
-):
-    """
-    ⚠️ Dangerous: Only authenticated users can delete all stars.
-    """
-    async with httpx.AsyncClient() as client:
-        resp = await client.delete(f"{DATABASE_SERVICE_URL}/stars")
-    if resp.status_code != 200:
-        raise HTTPException(status_code=resp.status_code, detail=resp.text)
-    return resp.json()
+# @app.delete("/stars")
+# async def delete_all_stars(
+#     current_user: str = Depends(get_current_user)
+# ):
+#     """
+#     ⚠️ Dangerous: Only authenticated users can delete all stars.
+#     """
+#     async with httpx.AsyncClient() as client:
+#         resp = await client.delete(f"{DATABASE_SERVICE_URL}/stars")
+#     if resp.status_code != 200:
+#         raise HTTPException(status_code=resp.status_code, detail=resp.text)
+#     return resp.json()
 
 @app.post("/stars/{star_id}/like")
 async def like_star(
